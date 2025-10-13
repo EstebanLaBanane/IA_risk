@@ -119,3 +119,30 @@ def random_uniform_reinforcement (s: State,
     assert all(abs(result[t_0] - result[t_1]) <= 1 for t_0 in result for t_1 in result), "uniform distribution of the units"
 
     return result
+
+
+def border_reinforcement (s: State,
+                          a: Army) -> Dict[Territory, Unit]:
+
+    """
+    The new units are distributed evenly among the borders of the army (ie. territories adjacent to enemy territoires), 
+    bonuses are distributed to the territories with the most enemy troups adjacent.
+    """
+
+
+    # PRE-CONDITION
+    assert isinstance(s, State)
+    assert isinstance(a, Army)
+    assert a in s.world.armies, "unknown army to reinforce"
+    assert not is_defeated_army(s, a), "defeated army cannot be reinforced"
+    assert reinforcement_units(s, a) > 0, "reinforcements units have to be strictly positive"
+
+    result = None
+    # T_a = territories_occupied_by_army(s, a)
+
+    # POST-CONDITION
+    assert all(result[t].army == a for t in result), "The selected territories belong to the army"
+    assert all(result[t] > 0 for t in result), "Each selected territory must receive at least one unit"
+    assert sum(result[t] for t in result) == reinforcement_units(s, a), "The sum of all the reinforcement units must be equal to {reinforcement_units(s, a)}"
+
+    return result

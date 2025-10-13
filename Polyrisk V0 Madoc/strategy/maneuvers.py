@@ -212,3 +212,32 @@ def random_uniform_largest_maneuver (s: State,
                    for b in bordering_territories(s, t)), "Effective unless the army has only isolated territories or not enough units to maneuver"
 
     return result
+
+
+def repairements (s: State,
+                                a: Army) -> Optional[Tuple[Territory, Territory, Unit]]:
+
+    """
+    Troups are moved to 'repair damages', ie reinforce territories that lost troups defending attacks
+    """
+
+    # PRE-CONDITION
+    assert isinstance(s, State)
+    assert isinstance(a, Army)
+    assert a in s.world.armies, "The army must belong to the current state"
+
+    result = None
+
+    # POST-CONDITION
+    if result is not None:
+        (t_0, t_1, n) = result
+        assert isinstance(t_0, Territory)
+        assert isinstance(t_1, Territory)
+        assert t_0 in s.state, "The starting territory belongs to the current state"
+        assert t_1 in s.state, "The ending territory belongs to the current state"
+        assert territory_occupant(s, t_0) == a, "The starting territory is occupied by the army"
+        assert territory_occupant(s, t_1) == a, "The defending territory is occupied by the army"
+        assert n > 0, "At least one unit is maneuvering"
+        assert n < territory_units(s, t_0), "At least one unit must be left behind"
+
+    return result
