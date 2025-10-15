@@ -285,3 +285,19 @@ def game_over (s: State) -> bool:
     assert isinstance(s, State)
 
     return winning_army(s) is not None
+
+
+"""
+Ajout
+"""
+
+def bordering_troups(s : State, t : Territory, occupant : Army):
+    """
+    Returns the number of enemy troups adjacent to the given territory, if 0 all of the neighboring territories are allies
+    """
+    neighbors= bordering_territories(s,t)
+    enemy_troup_counter = 0
+    for neighbor in neighbors:
+        if territory_occupant(s,neighbor) != occupant:
+            enemy_troup_counter += territory_units(s,neighbor)
+    return enemy_troup_counter

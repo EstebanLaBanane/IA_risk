@@ -62,7 +62,7 @@ from model.region import Unit
 from model.territory import Territory
 from model.state import State
 from model.army import Army
-from model.state_informations import is_defeated_army, territories_occupied_by_army, reinforcement_units, territory_occupant
+from model.state_informations import is_defeated_army, territories_occupied_by_army, reinforcement_units, territory_occupant, bordering_troups
 
 
 def random_reinforcement (s: State,
@@ -121,6 +121,8 @@ def random_uniform_reinforcement (s: State,
     return result
 
 
+
+
 def border_reinforcement (s: State,
                           a: Army) -> Dict[Territory, Unit]:
 
@@ -128,7 +130,6 @@ def border_reinforcement (s: State,
     The new units are distributed evenly among the borders of the army (ie. territories adjacent to enemy territoires), 
     bonuses are distributed to the territories with the most enemy troups adjacent.
     """
-
 
     # PRE-CONDITION
     assert isinstance(s, State)
@@ -138,7 +139,24 @@ def border_reinforcement (s: State,
     assert reinforcement_units(s, a) > 0, "reinforcements units have to be strictly positive"
 
     result = None
-    # T_a = territories_occupied_by_army(s, a)
+    T_a = list(territories_occupied_by_army(s, a))
+    border_territories = []
+    for i in range(0, len(T_a)):
+        territory : Territory = T_a[i]
+        neighboring_units = bordering_troups(s,territory,a)
+        if neighboring_units > 0:
+            border_territories.append([territory,neighboring_units])
+    border_territories = sorted(border_territories, key=lambda x:x[1],reverse=True)
+    
+    total_neighboring_troups = 0
+    for border_territory in border_territories:
+        total_neighboring_troups += border_territory[1]
+
+    for border_territory in border_territories:
+        border_territory.append(border_territory[1]/total_neighboring_troups)
+
+    # TODO : utiliser pourcentage participation aux troupes voisines pour repartir les renforts disponibles (=> trouver renfort disponible)    
+
 
     # POST-CONDITION
     assert all(result[t].army == a for t in result), "The selected territories belong to the army"

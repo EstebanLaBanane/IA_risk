@@ -84,14 +84,10 @@ class World:
         self._territories_index = T
         self._territories = { T[t] for t in T }
         self._adjacencies = D
-        self._region_adjacencies = { (r1, r2)
-                                      for t1 in T
-                                      for t2 in T
-                                      if t1 != t2
-                                      if (r1 := T[t1].region) != (r2 := T[t2].region)}
+        self._region_adjacencies = { (t.region, s.region) for (t, s) in D }
         self._region_territories = { R[r]: { T[t]
                                               for t in T
-                                              if T[t].region == r }
+                                              if T[t].region == R[r] }
                                       for r in R }
 
     @property

@@ -126,6 +126,7 @@ def counter_attack (s: State,
           if territory_occupant(s, t_d) != a
           if (u_a := territory_units(s, t_a)) > 1
           for n in range(1, min(3, u_a - 1) + 1) ]
+    
     if len(A) == 0:
         result = None
     else:

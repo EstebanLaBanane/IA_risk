@@ -215,7 +215,7 @@ def random_uniform_largest_maneuver (s: State,
 
 
 def repairements (s: State,
-                                a: Army) -> Optional[Tuple[Territory, Territory, Unit]]:
+                a: Army) -> Optional[Tuple[Territory, Territory, Unit]]:
 
     """
     Troups are moved to 'repair damages', ie reinforce territories that lost troups defending attacks

@@ -181,5 +181,5 @@ A selection of the strategies to be used by different armies.
 
 
 if __name__ == '__main__':
-    # play_and_display(World([ AIs[i] for i in GAME ], *risk_map()), R_MAX)
-    play_and_animate(World([ AIs[i] for i in GAME ], *risk_map()), R_MAX, 0.1)
+    play_and_display(World([ AIs[i] for i in GAME ], *risk_map()), R_MAX)
+    # play_and_animate(World([ AIs[i] for i in GAME ], *risk_map()), R_MAX, 0.1)
