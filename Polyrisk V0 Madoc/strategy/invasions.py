@@ -69,7 +69,7 @@ from random import randint
 from model.region import Unit
 from model.territory import Territory
 from model.state import State
-from model.state_informations import territory_occupant, territory_units
+from model.state_informations import territory_occupant, territory_units, border_territories
 
 
 def minimal_invasion (s:   State,

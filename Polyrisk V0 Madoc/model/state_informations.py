@@ -296,7 +296,7 @@ Ajout
 
 def bordering_troups(s : State, t : Territory, occupant : Army):
     """
-    Returns the number of enemy troups adjacent to the given territory, if 0 all of the neighboring territories are allies
+    Returns the number of enemy troups adjacent to the given territory, if 0 all of the neighboring territories are allies.
     """
     neighbors= bordering_territories(s,t)
     enemy_troup_counter = 0
@@ -306,6 +306,9 @@ def bordering_troups(s : State, t : Territory, occupant : Army):
     return enemy_troup_counter
 
 def border_territories(s : State, a : Army) -> list:
+    """
+    Returns the territories with enemy neighbors and the number of enemy units around. Format : [[Territory, enemy units],[...]] sorted descending by enemy units.
+    """
     border_territories = []
     T_a = list(territories_occupied_by_army(s, a))
     for i in range(0, len(T_a)):
@@ -315,3 +318,10 @@ def border_territories(s : State, a : Army) -> list:
             border_territories.append([territory,neighboring_units])
     border_territories = sorted(border_territories, key=lambda x:x[1],reverse=True)
     return border_territories
+
+def is_border_territory(s :State, a : Army, t : Territory) -> bool:
+    """
+    Returns true if the territory t is a border territory (ie. has neighboring enemy territory of the army a) regardless if the territory t is in the army a
+    """
+
+    #TODO
