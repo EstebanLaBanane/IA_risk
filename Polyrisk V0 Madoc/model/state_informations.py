@@ -31,6 +31,9 @@ __all__ = [
     'undefeated_armies',
     'winning_army',
     'game_over',
+
+    'bordering_troups',
+    'border_territories',
     ]
 
 
@@ -301,3 +304,14 @@ def bordering_troups(s : State, t : Territory, occupant : Army):
         if territory_occupant(s,neighbor) != occupant:
             enemy_troup_counter += territory_units(s,neighbor)
     return enemy_troup_counter
+
+def border_territories(s : State, a : Army) -> list:
+    border_territories = []
+    T_a = list(territories_occupied_by_army(s, a))
+    for i in range(0, len(T_a)):
+        territory : Territory = T_a[i]
+        neighboring_units = bordering_troups(s,territory,a)
+        if neighboring_units > 0:
+            border_territories.append([territory,neighboring_units])
+    border_territories = sorted(border_territories, key=lambda x:x[1],reverse=True)
+    return border_territories

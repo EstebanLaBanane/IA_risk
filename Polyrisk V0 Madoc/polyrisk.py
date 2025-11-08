@@ -173,7 +173,7 @@ The available AIs, identified by indices in order to be selected later.
 
 
 # GAME = [1, 1, 2, 2]
-GAME = [3,3,3,3]
+GAME = [2,3,3,3]
 
 """
 A selection of the strategies to be used by different armies.

@@ -6,6 +6,7 @@
 # Licence:  proprietary
 # The use of this library is not authorised outside the Polytechnic School of the University of Nantes.
 #
+import math
 
 
 """
@@ -62,7 +63,7 @@ from model.region import Unit
 from model.territory import Territory
 from model.state import State
 from model.army import Army
-from model.state_informations import is_defeated_army, territories_occupied_by_army, reinforcement_units, territory_occupant, bordering_troups
+from model.state_informations import is_defeated_army, territories_occupied_by_army, reinforcement_units, territory_occupant, border_territories 
 
 
 def random_reinforcement (s: State,
@@ -127,7 +128,7 @@ def border_reinforcement (s: State,
                           a: Army) -> Dict[Territory, Unit]:
 
     """
-    The new units are distributed evenly among the borders of the army (ie. territories adjacent to enemy territoires), 
+    The new units are distributed among the borders of the army (ie. territories adjacent to enemy territoires), 
     bonuses are distributed to the territories with the most enemy troups adjacent.
     """
 
@@ -138,29 +139,38 @@ def border_reinforcement (s: State,
     assert not is_defeated_army(s, a), "defeated army cannot be reinforced"
     assert reinforcement_units(s, a) > 0, "reinforcements units have to be strictly positive"
 
-    result = None
+    result = {}
     T_a = list(territories_occupied_by_army(s, a))
-    border_territories = []
-    for i in range(0, len(T_a)):
-        territory : Territory = T_a[i]
-        neighboring_units = bordering_troups(s,territory,a)
-        if neighboring_units > 0:
-            border_territories.append([territory,neighboring_units])
-    border_territories = sorted(border_territories, key=lambda x:x[1],reverse=True)
     
+    # At the end of the processing border_territories will follow this format :
+    # [ [Territory, neighboring_units, fraction of all neighboring units, awarded reinforcement], [...] ]
+    b_territories = border_territories(s,a)
+
     total_neighboring_troups = 0
-    for border_territory in border_territories:
+    for border_territory in b_territories:
         total_neighboring_troups += border_territory[1]
 
-    for border_territory in border_territories:
+    for border_territory in b_territories:
         border_territory.append(border_territory[1]/total_neighboring_troups)
 
-    # TODO : utiliser pourcentage participation aux troupes voisines pour repartir les renforts disponibles (=> trouver renfort disponible)    
+    del total_neighboring_troups, border_territory
+
+    start_units = reinforcement_units(s, a)
+    remaining_units = start_units
+    for border_territory in b_territories:
+        if remaining_units > 0:
+            awarded_units = max(math.floor(border_territory[2]*start_units),1)
+            remaining_units -= awarded_units
+            result[border_territory[0]] = awarded_units
+    
+    del start_units, remaining_units, awarded_units, border_territory
+
 
 
     # POST-CONDITION
-    assert all(result[t].army == a for t in result), "The selected territories belong to the army"
+    assert all(territory_occupant(s, t) == a for t in result), "The selected territories belong to the army"
     assert all(result[t] > 0 for t in result), "Each selected territory must receive at least one unit"
     assert sum(result[t] for t in result) == reinforcement_units(s, a), "The sum of all the reinforcement units must be equal to {reinforcement_units(s, a)}"
 
     return result
+
