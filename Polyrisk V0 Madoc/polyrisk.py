@@ -173,7 +173,7 @@ The available AIs, identified by indices in order to be selected later.
 
 
 # GAME = [1, 1, 2, 2]
-GAME = [2,3,3,3]
+GAME = [1,1,1,3]
 
 """
 A selection of the strategies to be used by different armies.
@@ -182,4 +182,4 @@ A selection of the strategies to be used by different armies.
 
 if __name__ == '__main__':
     play_and_display(World([ AIs[i] for i in GAME ], *risk_map()), R_MAX)
-    # play_and_animate(World([ AIs[i] for i in GAME ], *risk_map()), R_MAX, 0.1)
+    #play_and_animate(World([ AIs[i] for i in GAME ], *risk_map()), R_MAX, 0.1)

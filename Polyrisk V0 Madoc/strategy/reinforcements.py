@@ -6,7 +6,6 @@
 # Licence:  proprietary
 # The use of this library is not authorised outside the Polytechnic School of the University of Nantes.
 #
-import math
 
 
 """
@@ -140,7 +139,6 @@ def border_reinforcement (s: State,
     assert reinforcement_units(s, a) > 0, "reinforcements units have to be strictly positive"
 
     result = {}
-    T_a = list(territories_occupied_by_army(s, a))
     
     # At the end of the processing border_territories will follow this format :
     # [ [Territory, neighboring_units, fraction of all neighboring units, awarded reinforcement], [...] ]
@@ -159,13 +157,17 @@ def border_reinforcement (s: State,
     remaining_units = start_units
     for border_territory in b_territories:
         if remaining_units > 0:
-            awarded_units = max(math.floor(border_territory[2]*start_units),1)
+            value = start_units * border_territory[2]
+            awarded_units = min(max(round(value),1),remaining_units)
             remaining_units -= awarded_units
             result[border_territory[0]] = awarded_units
     
-    del start_units, remaining_units, awarded_units, border_territory
+    if remaining_units != 0:
+        result[border_territory[0]] += 1
 
+    del remaining_units, awarded_units, border_territory
 
+    
 
     # POST-CONDITION
     assert all(territory_occupant(s, t) == a for t in result), "The selected territories belong to the army"
