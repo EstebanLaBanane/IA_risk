@@ -172,7 +172,7 @@ def border_invasion (s:   State,
     if not is_border_territory(s,attacker_army,t_a,t_d):
         result = territory_units(s, t_a) - p_a - 1
     elif not is_border_territory(s,attacker_army,t_d):
-        result = 1
+        result = n_a - p_a
     else:
         available_troups = territory_units(s, t_a) - p_a - 1
         threat_attacker_territory = bordering_troups(s,t_a,attacker_army,t_d)

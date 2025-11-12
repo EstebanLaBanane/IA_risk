@@ -210,7 +210,7 @@ def territory_fronts (s: State) -> Set[Tuple[Territory, Army, Territory, Army]]:
 
     return { (t1, a1, t2, a2)
              for (t1, t2) in s.world.adjacencies
-            if (a1 := territory_occupant(s, t1)) != (a2 := territory_occupant(s, t1)) }
+            if (a1 := territory_occupant(s, t1)) != (a2 := territory_occupant(s, t2)) }
 
 
 def army_units (s: State,

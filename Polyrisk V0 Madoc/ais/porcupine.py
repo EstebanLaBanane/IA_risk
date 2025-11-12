@@ -9,17 +9,17 @@ __all__ = [
     ]
 
 
-from strategy.strategy import Strategy
+from strategy.strategyPorcupine import StrategyPorcupine
 from strategy.reinforcements import border_reinforcement
 from strategy.attacks import counter_attack
-from strategy.defenses import maximum_defense
+from strategy.defenses import maximum_porcupine_defense
 from strategy.invasions import border_invasion
-from strategy.maneuvers import repairements
+from strategy.maneuvers import edge_maneuvers
 
 
-strategy_porcupine = Strategy("Porcupine",
+strategy_porcupine = StrategyPorcupine("Porcupine",
                                  border_reinforcement,
                                  counter_attack,
-                                 maximum_defense,
+                                 maximum_porcupine_defense,
                                  border_invasion,
-                                 repairements)
+                                 edge_maneuvers)

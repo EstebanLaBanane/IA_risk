@@ -214,7 +214,7 @@ def random_uniform_largest_maneuver (s: State,
     return result
 
 
-def repairements (s: State,
+def edge_maneuvers (s: State,
                 a: Army) -> Optional[Tuple[Territory, Territory, Unit]]:
 
     """
@@ -226,6 +226,7 @@ def repairements (s: State,
     assert isinstance(a, Army)
     assert a in s.world.armies, "The army must belong to the current state"
 
+    territories = territories_occupied_by_army(s,a)
     result = None
 
     # POST-CONDITION
