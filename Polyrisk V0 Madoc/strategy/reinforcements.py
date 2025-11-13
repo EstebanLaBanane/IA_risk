@@ -62,7 +62,7 @@ from model.region import Unit
 from model.territory import Territory
 from model.state import State
 from model.army import Army
-from model.state_informations import is_defeated_army, territories_occupied_by_army, reinforcement_units, territory_occupant, border_territories 
+from model.state_informations import is_defeated_army, territories_occupied_by_army, reinforcement_units, territory_occupant, border_territories,territory_units 
 
 
 def random_reinforcement (s: State,
@@ -122,7 +122,6 @@ def random_uniform_reinforcement (s: State,
 
 
 
-
 def border_reinforcement (s: State,
                           a: Army) -> Dict[Territory, Unit]:
 
@@ -144,31 +143,91 @@ def border_reinforcement (s: State,
     # [ [Territory, neighboring_units, fraction of all neighboring units, awarded reinforcement], [...] ]
     b_territories = border_territories(s,a)
 
-    total_neighboring_troups = 0
-    for border_territory in b_territories:
-        total_neighboring_troups += border_territory[1]
+    # total_neighboring_troups = 0
+    # for border_territory in b_territories:
+    #     total_neighboring_troups += border_territory[1]
+
+    # for border_territory in b_territories:
+    #     border_territory.append(border_territory[1]/total_neighboring_troups)
+
+    # del total_neighboring_troups, border_territory
+
+    # start_units = reinforcement_units(s, a)
+    # remaining_units = start_units
+    # for border_territory in b_territories:
+    #     if remaining_units > 0:
+    #         value = start_units * border_territory[2]
+    #         awarded_units = min(max(round(value),1),remaining_units)
+    #         remaining_units -= awarded_units
+    #         result[border_territory[0]] = awarded_units
+    
+    # if remaining_units != 0:
+    #     result[border_territory[0]] += 1
+
+    # del remaining_units, awarded_units, border_territory
 
     for border_territory in b_territories:
-        border_territory.append(border_territory[1]/total_neighboring_troups)
+        border_territory.append(max(border_territory[1]+3-territory_units(s,border_territory[0]),0))
 
-    del total_neighboring_troups, border_territory
+    total_unanswered_neighboring_troups = 0
+    for border_territory in b_territories:
+        total_unanswered_neighboring_troups += border_territory[2]
+
+    b_territories = sorted(
+        b_territories,
+        key=lambda x: (-x[2], -x[1])  # on inverse le signe pour un tri décroissant du premier critère
+    )
+
+    del border_territory
 
     start_units = reinforcement_units(s, a)
     remaining_units = start_units
+    if b_territories[0][2] == 0:
+        for border_territory in b_territories:
+           awarded_units = round(start_units/len(b_territories))
+           result[border_territory[0]] = awarded_units
+           remaining_units -= awarded_units
+        
+        if remaining_units< 0:
+            # To avoid a case where decrementing reinforcement means 0
+            if result[border_territory[0]] <= abs(remaining_units):
+                result.pop(border_territory[0])
+            else:
+                result[border_territory[0]] -= abs(remaining_units)
+            remaining_units+=abs(remaining_units)
+        elif remaining_units>0:
+            result[border_territory[0]] += remaining_units
+            remaining_units-=remaining_units
+        
+        # POST-CONDITION
+        assert all(territory_occupant(s, t) == a for t in result), "The selected territories belong to the army"
+        assert all(result[t] > 0 for t in result), "Each selected territory must receive at least one unit"
+        if sum(result[t] for t in result) != reinforcement_units(s,a):
+            supposed = reinforcement_units(s,a)
+        assert sum(result[t] for t in result) == reinforcement_units(s, a), "ICI, The sum of all the reinforcement units must be equal to {reinforcement_units(s, a)}"            
+        return result
+
+
     for border_territory in b_territories:
-        if remaining_units > 0:
-            value = start_units * border_territory[2]
-            awarded_units = min(max(round(value),1),remaining_units)
-            remaining_units -= awarded_units
-            result[border_territory[0]] = awarded_units
+        if remaining_units <= 0:
+            break
+        #max(total_unanswer,0) to avoid division by zero
+        value = start_units * (border_territory[2]/max(total_unanswered_neighboring_troups,1))
+        awarded_units = min(max(round(value),1),remaining_units)
+        remaining_units -= awarded_units
+        result[border_territory[0]] = awarded_units
     
-    if remaining_units != 0:
-        result[border_territory[0]] += 1
-
-    del remaining_units, awarded_units, border_territory
-
-    
-
+        if remaining_units< 0:
+            # To avoid a case where decrementing reinforcement means 0
+            if result[border_territory[0]] <= abs(remaining_units):
+                result.pop(border_territory[0])
+            else:
+                result[border_territory[0]] -= abs(remaining_units)
+            remaining_units+=abs(remaining_units)
+        elif remaining_units>0:
+            result[border_territory[0]] += remaining_units
+            remaining_units-=remaining_units
+            
     # POST-CONDITION
     assert all(territory_occupant(s, t) == a for t in result), "The selected territories belong to the army"
     assert all(result[t] > 0 for t in result), "Each selected territory must receive at least one unit"
