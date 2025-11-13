@@ -143,29 +143,6 @@ def border_reinforcement (s: State,
     # [ [Territory, neighboring_units, fraction of all neighboring units, awarded reinforcement], [...] ]
     b_territories = border_territories(s,a)
 
-    # total_neighboring_troups = 0
-    # for border_territory in b_territories:
-    #     total_neighboring_troups += border_territory[1]
-
-    # for border_territory in b_territories:
-    #     border_territory.append(border_territory[1]/total_neighboring_troups)
-
-    # del total_neighboring_troups, border_territory
-
-    # start_units = reinforcement_units(s, a)
-    # remaining_units = start_units
-    # for border_territory in b_territories:
-    #     if remaining_units > 0:
-    #         value = start_units * border_territory[2]
-    #         awarded_units = min(max(round(value),1),remaining_units)
-    #         remaining_units -= awarded_units
-    #         result[border_territory[0]] = awarded_units
-    
-    # if remaining_units != 0:
-    #     result[border_territory[0]] += 1
-
-    # del remaining_units, awarded_units, border_territory
-
     for border_territory in b_territories:
         border_territory.append(max(border_territory[1]+3-territory_units(s,border_territory[0]),0))
 
@@ -227,7 +204,7 @@ def border_reinforcement (s: State,
         elif remaining_units>0:
             result[border_territory[0]] += remaining_units
             remaining_units-=remaining_units
-            
+
     # POST-CONDITION
     assert all(territory_occupant(s, t) == a for t in result), "The selected territories belong to the army"
     assert all(result[t] > 0 for t in result), "Each selected territory must receive at least one unit"
