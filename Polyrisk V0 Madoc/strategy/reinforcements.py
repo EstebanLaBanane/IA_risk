@@ -161,26 +161,49 @@ def border_reinforcement (s: State,
     remaining_units = start_units
     if b_territories[0][2] == 0:
         for border_territory in b_territories:
-           awarded_units = round(start_units/len(b_territories))
-           result[border_territory[0]] = awarded_units
-           remaining_units -= awarded_units
-        
-        if remaining_units< 0:
+            if remaining_units <= 0:
+                break
+            awarded_units = max(round(start_units/len(b_territories)), 1)
+            result[border_territory[0]] = awarded_units
+            remaining_units -= awarded_units
+  
+
+        del remaining_units
+
+        diff = sum(result[t] for t in result) - reinforcement_units(s,a)
+        start_sum = sum(result[t] for t in result)
+        if diff> 0:
             # To avoid a case where decrementing reinforcement means 0
-            if result[border_territory[0]] <= abs(remaining_units):
-                result.pop(border_territory[0])
+            if result[list(result)[-1]] == diff:
+                result.pop(list(result)[-1])
+            elif result[list(result)[-1]] > diff:
+                result[list(result)[-1]] -= abs(diff)
             else:
-                result[border_territory[0]] -= abs(remaining_units)
-            remaining_units+=abs(remaining_units)
-        elif remaining_units>0:
-            result[border_territory[0]] += remaining_units
-            remaining_units-=remaining_units
+                new_diff = diff - result[list(result)[-1]]
+                result.pop(list(result)[-1])
+                result[list(result)[-1]] -= abs(new_diff)
+
+        elif diff<0:
+            result[list(result)[-1]] += abs(diff)
         
         # POST-CONDITION
         assert all(territory_occupant(s, t) == a for t in result), "The selected territories belong to the army"
+        # if not all(result[t] > 0 for t in result):
+        #     print("supposed : ",reinforcement_units(s,a))
+        #     print("reality : ",sum(result[t] for t in result))
+        #     print("result : ",result)
+        #     print("diff : ",diff)
+        #     print("start sum : ",start_sum)
+        #     print("recalculed : ",sum(result[t] for t in result) - reinforcement_units(s,a))
         assert all(result[t] > 0 for t in result), "Each selected territory must receive at least one unit"
-        if sum(result[t] for t in result) != reinforcement_units(s,a):
-            supposed = reinforcement_units(s,a)
+        
+        # if sum(result[t] for t in result) != reinforcement_units(s,a):
+        #     print("supposed : ",reinforcement_units(s,a))
+        #     print("reality : ",sum(result[t] for t in result))
+        #     print("result : ",result)
+        #     print("diff : ",diff)
+        #     print("start sum : ",start_sum)
+        #     print("recalculed : ",sum(result[t] for t in result) - reinforcement_units(s,a))
         assert sum(result[t] for t in result) == reinforcement_units(s, a), "ICI, The sum of all the reinforcement units must be equal to {reinforcement_units(s, a)}"            
         return result
 
@@ -194,16 +217,21 @@ def border_reinforcement (s: State,
         remaining_units -= awarded_units
         result[border_territory[0]] = awarded_units
     
-        if remaining_units< 0:
-            # To avoid a case where decrementing reinforcement means 0
-            if result[border_territory[0]] <= abs(remaining_units):
-                result.pop(border_territory[0])
-            else:
-                result[border_territory[0]] -= abs(remaining_units)
-            remaining_units+=abs(remaining_units)
-        elif remaining_units>0:
-            result[border_territory[0]] += remaining_units
-            remaining_units-=remaining_units
+    diff = sum(result[t] for t in result) - reinforcement_units(s,a)
+    start_sum = sum(result[t] for t in result)
+    if diff> 0:
+        # To avoid a case where decrementing reinforcement means 0
+        if result[list(result)[-1]] == diff:
+            result.pop(list(result)[-1])
+        elif result[list(result)[-1]] > diff:
+            result[list(result)[-1]] -= abs(diff)
+        else:
+            new_diff = diff - result[list(result)[-1]]
+            result.pop(list(result)[-1])
+            result[list(result)[-1]] -= abs(new_diff)
+
+    elif diff<0:
+        result[list(result)[-1]] += abs(diff)
 
     # POST-CONDITION
     assert all(territory_occupant(s, t) == a for t in result), "The selected territories belong to the army"
