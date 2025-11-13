@@ -71,7 +71,7 @@ from model.region import Unit
 from model.territory import Territory
 from model.army import Army
 from model.state import State
-from model.state_informations import territory_occupant, territory_units, bordering_territories, territories_occupied_by_army
+from model.state_informations import territory_occupant, territory_units, bordering_territories, territories_occupied_by_army,is_border_territory, reachable_territories, bordering_troups
 
 
 def no_maneuver (s: State,
@@ -224,10 +224,48 @@ def edge_maneuvers (s: State,
     # PRE-CONDITION
     assert isinstance(s, State)
     assert isinstance(a, Army)
-    assert a in s.world.armies, "The army must belong to the current state"
-
-    territories = territories_occupied_by_army(s,a)
+    assert a in s.world.armies, "The army must belong to the current state" 
+    
     result = None
+
+    # for territory in territories_occupied_by_army(s,a):
+    #     if is_border_territory(s,a,territory) or territory_units(s,territory) == 1:
+    #         continue
+    #     reachable = reachable_territories(s,a,territory)
+    #     # FORMAT [[territory,nb_enemy_units],[...]]
+    #     reachable_border_territories = []
+    #     for reachable_territory in reachable:
+    #         if not is_border_territory(s,a,reachable_territory):
+    #             continue
+    #         reachable_border_territories.append([reachable_territory,bordering_troups(s,reachable_territory,a)])
+
+
+    #     reachable_border_territories = sorted(reachable_border_territories, key=lambda x:x[1],reverse=True)
+    #     target = reachable_border_territories[0][0]
+
+    #     distance(target,reachable)
+
+    #     return [territory,...,territory_units(s,territory)-1]
+    border_territories = []
+    for territory in territories_occupied_by_army(s,a):
+
+        if is_border_territory(s,a,territory) or territory_units(s,territory) == 1:
+            continue
+        for neighbor in bordering_territories(s,territory):
+            if not is_border_territory(s,a,neighbor):
+                continue
+            border_territories.append([territory,neighbor,territory_units(s,territory)-1,bordering_troups(s,neighbor,a)])
+    
+    border_territories = sorted(
+        border_territories,
+        key=lambda x: (-x[2], -x[3])  # on inverse le signe pour un tri décroissant du premier critère
+    )
+    
+    if len(border_territories):
+        return [border_territories[0][0],border_territories[0][1],border_territories[0][2]]
+
+
+
 
     # POST-CONDITION
     if result is not None:

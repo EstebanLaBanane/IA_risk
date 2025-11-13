@@ -34,6 +34,8 @@ __all__ = [
 
     'bordering_troups',
     'border_territories',
+    'is_border_territory',
+    'reachable_territories',
     ]
 
 
@@ -294,7 +296,7 @@ def game_over (s: State) -> bool:
 Ajout
 """
 
-def bordering_troups(s : State, t : Territory, occupant : Army, excluded_territory : None | Territory = None):
+def bordering_troups(s : State, t : Territory, occupant : Army, excluded_territory : None | Territory = None) -> int:
     """
     Returns the number of enemy troups adjacent to the given territory, if 0 all of the neighboring territories are allies.
     If an excluded_territory is specified : it will not be taken into account as an enemy territory (used when an army has not yet invaded a territory but considers it its own)
@@ -332,3 +334,19 @@ def is_border_territory(s :State, a : Army, t : Territory, excluded_territory : 
             elif territory != excluded_territory:
                 return True
     return False
+
+def reachable_territories(s :State, a : Army, t : Territory,excluded_territories : None | Set[Territory] = None) -> list:
+    result = []
+    for territory in bordering_territories(s,t):
+        if territory_occupant(s,territory) != a:
+            continue
+        if excluded_territories is None:
+            result.append(territory)
+            new_excluded = [t]
+            result += reachable_territories(s,a,territory,new_excluded)
+        elif territory not in excluded_territories:
+            result.append(territory)
+            new_excluded = excluded_territories+ [t]
+            result += reachable_territories(s,a,territory,new_excluded)
+
+    return list(set(result))
