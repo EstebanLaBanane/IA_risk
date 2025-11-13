@@ -127,7 +127,7 @@ def counter_attack (s: State,
         t_d = defense[0]
         t_a = defense[1]
         porcupine.last_round_defenses = porcupine.last_round_defenses[1:]
-        if territory_occupant(s,t_d) == a and territory_occupant(s,t_a) != a and territory_units(s,t_d)>1:
+        if territory_occupant(s,t_d) == a and territory_occupant(s,t_a) != a and territory_units(s,t_d)>1 and territory_units(s,t_d)>= territory_units(s,t_a)+3:
             # MAXIMUM COUNTER ATTACK
             result = [t_d,t_a,min(territory_units(s,t_d)-1,3)]
             break
