@@ -63,7 +63,7 @@ from model.territory import Territory
 from model.state import State
 from model.army import Army
 from model.state_informations import is_defeated_army, territories_occupied_by_army, reinforcement_units, territory_occupant
-
+from strategy.reinforcements import random_uniform_reinforcement
 
 def border_reinforcement(s: State,
                          a: Army) -> Dict[Territory, Unit]:
