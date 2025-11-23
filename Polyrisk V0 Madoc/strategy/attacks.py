@@ -69,7 +69,7 @@ from model.region import Unit
 from model.army import Army
 from model.territory import Territory
 from model.state import State
-from model.state_informations import territory_occupant, territory_units, is_defeated_army
+from model.state_informations import territory_occupant, territory_units, is_defeated_army, army_territory_fronts
 
 
 def random_attack (s: State,
@@ -83,15 +83,11 @@ def random_attack (s: State,
     assert not is_defeated_army(s, a), "The army must not be defeated"
 
     A = [ (t_a, t_d, n)
-          for (t_a, t_d) in s.world.adjacencies
-          if territory_occupant(s, t_a) == a
-          if territory_occupant(s, t_d) != a
+          for (t_a, t_d) in army_territory_fronts(s, a)
           if (u_a := territory_units(s, t_a)) > 1
           for n in range(1, min(3, u_a - 1) + 1) ]
-    if len(A) == 0:
-        result = None
-    else:
-        result = choice(A)
+    result = ( None      if len(A) == 0 else
+               choice(A) )
 
     if result is not None:
         (t_a, t_d, n) = result

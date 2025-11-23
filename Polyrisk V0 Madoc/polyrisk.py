@@ -22,7 +22,7 @@ from typing import Optional
 from time import sleep
 from model.region import Unit
 from model.world import World
-from model.state_informations import undefeated_armies, army_units, is_defeated_army
+from model.state_informations import undefeated_armies, army_units, is_defeated_army, winning_army
 from boards.polytech_board import risk_map, risk_display
 # from boards.classic_board import risk_map, risk_display
 from boards.rendering import risk_colour_map, colour_map, BRIGHT_BACKGROUND_COLOUR_MAP
@@ -65,9 +65,9 @@ def play_and_display (w:     World,
                                          for t in numbering ])))
     sleep(0.1)
     P = game(s_0, r_max)
-    for (j, ((R, A, I, m), s_j)) in enumerate(P):
+    for (j, ((R, A, I, m), s_j)) in enumerate(P, start = 1):
         a = s_j.state[next(iter(R))][0]
-        print(f"State {j}:  Army ``{a.colour}'' turn ({a.strategy.name})")
+        print(f"State {j} / {len(P)}:  Army ``{a.colour}'' turn ({a.strategy.name})")
         print("Reinforcements:")
         for t in R:
             print(f"   - ``{t.name}'' with {format_units(R[t])}")
@@ -106,7 +106,7 @@ def play_and_animate (w:     World,
                       r_max: Optional[int],
                       d:     float = 0.5):
     """
-    Plays a game and displays only the consecutive boards, with a delay between each frame, the default value of which is half a second.
+    Plays a game and displays only the consecutive boards, with a delay between each frame, the default value of which being half a second.
 
     :parameter w:  a world, i.e., a board and armies
     :parameter r_max:  an optional maximal number of rounds
@@ -125,6 +125,12 @@ def play_and_animate (w:     World,
     def downlight (t: str) -> str:
         return "\x1b[37;40m" + t + "\x1b[0m"
 
+    def winner_highlight (t: str) -> str:
+        return "\x1b[102m\x1b[1m" + t + "\x1b[0m"
+
+    def winner (t: str) -> str:
+        return "\x1b[1m" + t + "\x1b[0m"
+
     (text_map, legend, numbering) = risk_display()
     s_0 = random_initial_state(w)
 
@@ -135,13 +141,16 @@ def play_and_animate (w:     World,
     sleep(d)
     P = game(s_0, r_max)
     A = list(s_0.world.armies)
-    for (j, ((R, _, _, _), s_j)) in enumerate(P):
+    a_win = winning_army(P[-1][1])
+    for (j, ((R, _, _, _), s_j)) in enumerate(P, start = 1):
         a_j = s_j.state[next(iter(R))][0]
-        print(f"{top_console()}State {j}: " + ", ".join([ ( highlight(t) if a == a_j                 else
-                                                            downlight(t) if is_defeated_army(s_j, a) else
-                                                            t )
-                                                          for a in A
-                                                          for t in [ f"{a.colour} ({a.strategy.name})" ] ]))
+        print(f"{top_console()}State {j} / {len(P)}: " + ", ".join([ ( downlight(t)        if is_defeated_army(s_j, a) else
+                                                                       winner_highlight(t) if a == a_j and a == a_win  else
+                                                                       highlight(t)        if a == a_j                 else
+                                                                       winner(t)           if              a == a_win  else
+                                                                       t )
+                                                                     for a in A
+                                                                     for t in [ f"{a.colour} ({a.strategy.name})" ] ]))
         print(colour_map(risk_colour_map(s_j, legend, BRIGHT_BACKGROUND_COLOUR_MAP), text_map.format(* [ s_j.state[s_j.world.territory(t)][1]
                                                                                                          for t in numbering ])), end="")
         sleep(d)
@@ -149,7 +158,7 @@ def play_and_animate (w:     World,
 
 R_MAX = 500
 """
-The maximal number of turns before stopping the game even if there is no winner.
+The maximal number of rounds before stopping the game even if there is no winner.
 """
 
 
