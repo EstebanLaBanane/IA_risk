@@ -10,11 +10,11 @@ __all__ = [
 
 
 from strategy.strategyPorcupine import StrategyPorcupine
-from strategy.reinforcements import border_reinforcement
-from strategy.attacks import counter_attack
-from strategy.defenses import maximum_porcupine_defense
-from strategy.invasions import border_invasion
-from strategy.maneuvers import edge_maneuvers
+from strategy.reinforcementsPorcupine import border_reinforcement
+from strategy.attacksPorcupine import counter_attack
+from strategy.defensesPorcupine import maximum_porcupine_defense
+from strategy.invasionsPorcupine import border_invasion
+from strategy.maneuversPorcupine import edge_maneuvers
 
 
 strategy_porcupine = StrategyPorcupine("Porcupine",

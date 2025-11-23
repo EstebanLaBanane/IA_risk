@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
     print(f"=== PolyRisk batch ===\nGames: {N_GAMES}\nLineup: {GAME}\nR_MAX: {R_MAX}\n")
 
-    n_cpu = min(cpu_count(), 5)  # limite à 5 threads pour éviter surcharge
+    n_cpu = min(cpu_count(), 10)  # limite à 10 threads pour éviter surcharge
     print(f"→ Using {n_cpu} CPU cores")
 
     with Pool(processes=n_cpu) as pool:
