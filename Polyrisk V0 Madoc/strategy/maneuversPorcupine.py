@@ -48,7 +48,7 @@ def edge_maneuvers (s: State,
         for neighbor in bordering_territories(s,territory):
             if not is_border_territory(s,a,neighbor):
                 continue
-            border_territories.append([territory,neighbor,territory_units(s,territory)-1,bordering_troups(s,neighbor,a)])
+            border_territories.append([territory,neighbor,territory_units(s,territory)-1,(bordering_troups(s,neighbor,a)+3)-territory_units(s,neighbor)])
     
     border_territories = sorted(
         border_territories,
