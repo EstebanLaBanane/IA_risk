@@ -4,7 +4,8 @@ from model.region import Unit
 from model.territory import Territory
 from model.army import Army
 from model.state import State
-from model.state_informations import territory_occupant, territory_units, bordering_territories, territories_occupied_by_army,is_border_territory, bordering_troups
+from model.state_informations import territory_occupant, territory_units, bordering_territories, territories_occupied_by_army
+from model.custom_state_informations import is_border_territory, bordering_troups
 
 def edge_maneuvers (s: State,
                 a: Army) -> Optional[Tuple[Territory, Territory, Unit]]:

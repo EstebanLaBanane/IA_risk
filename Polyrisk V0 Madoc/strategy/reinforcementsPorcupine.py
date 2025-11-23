@@ -4,7 +4,8 @@ from model.region import Unit
 from model.territory import Territory
 from model.state import State
 from model.army import Army
-from model.state_informations import is_defeated_army, reinforcement_units, territory_occupant, border_territories,territory_units 
+from model.state_informations import is_defeated_army, reinforcement_units, territory_occupant,territory_units 
+from model.custom_state_informations import border_territories
 
 def border_reinforcement (s: State,
                           a: Army) -> Dict[Territory, Unit]:

@@ -2,7 +2,8 @@ from random import randint
 from model.region import Unit
 from model.territory import Territory
 from model.state import State
-from model.state_informations import territory_occupant, territory_units, is_border_territory, bordering_troups
+from model.state_informations import territory_occupant, territory_units
+from model.custom_state_informations import is_border_territory, bordering_troups
 
 def border_invasion (s:   State,
                     t_a: Territory,

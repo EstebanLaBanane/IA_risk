@@ -1,4 +1,3 @@
-from random import randint
 from model.region import Unit
 from model.territory import Territory
 from model.state import State

@@ -71,8 +71,8 @@ def risk_map () -> Tuple[Dict[RegionName, Set[TerritoryName]], Dict[TerritoryNam
     """
     regional_nodes = {
         iht:    { si, lsh, peip },
-        isitem: { bureaux, hall, chaud, froid, machines },
-        ireste: { amphi, direction, info, eon, srt },
+        isitem: { bureaux, hall, chaud, froid },
+        ireste: { amphi, direction, info, eon, srt, machines },
         gavy:   { mer, biere, labo, degustation },
         }
     Gamma = {
