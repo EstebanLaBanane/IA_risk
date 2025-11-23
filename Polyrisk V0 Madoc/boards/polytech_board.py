@@ -89,10 +89,10 @@ def risk_map () -> Tuple[Dict[RegionName, Set[TerritoryName]], Dict[TerritoryNam
         info:        { machines, eon },
         eon:         { machines, direction, srt, info },
         srt:         { eon },
-        mer:         { biere, peip },
+        mer:         { biere, peip, direction },
         biere:       { mer, degustation, labo },
         degustation: { biere, labo },
-        labo:        { biere, degustation, direction },
+        labo:        { biere, degustation },
         }
     return (regional_nodes, Gamma)
 

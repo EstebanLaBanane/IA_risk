@@ -25,8 +25,6 @@ __all__ = [
     'regions_occupied_by_army',
     'is_occupied_region',
     'territory_fronts',
-    'army_territory_fronts',
-    'army_adjacent_territories',
     'army_units',
     'is_defeated_army',
     'reinforcement_units',
@@ -62,7 +60,6 @@ def territory_occupant (s: State,
 
     result = s.state[t][0]
 
-    assert isinstance(result, Army)
     assert result in s.world.armies, "the occupying army belongs to the armies of the world"
 
     return result
@@ -87,7 +84,6 @@ def territory_units (s: State,
 
     result = s.state[t][1]
 
-    assert isinstance(result, Unit)
     assert result >= 1, "there is always at least one unit on any territory"
 
     return result
@@ -113,12 +109,7 @@ def territories_occupied_by_army (s: State,
                for t in s.world.territories
                if territory_occupant(s, t) == a }
 
-    assert isinstance(result, set)
-    assert all(isinstance(t, Territory) for t in result)
     assert result <= s.world.territories, "the territories are a sub-set of the territories of the world"
-    assert len(result) == len(s.world.territories) - len({ t
-                                                           for t in s.world.territories
-                                                           if territory_occupant(s, t) != a })
 
     return result
 
@@ -131,14 +122,10 @@ def bordering_territories (s: State,
     assert isinstance(s, State)
     assert isinstance(t, Territory)
 
-    result = { t2
-               for t2 in s.world.territories
-               if (t, t2) in s.world.adjacencies }
+    return { t2
+             for t2 in s.world.territories
+             if (t, t2) in s.world.adjacencies }
 
-    assert isinstance(result, set)
-    assert all(isinstance(t, Territory) for a in result)
-
-    return result
 
 def armies_in_region (s: State,
                       r: Region) -> Set[Army]:
@@ -156,14 +143,9 @@ def armies_in_region (s: State,
     assert isinstance(r, Region)
     assert r in s.world.regions, "the region must belong to the world"
 
-    result = { territory_occupant(s, t)
-                for t in s.state
-                if t.region == r }
-
-    assert isinstance(result, set)
-    assert all(isinstance(a, Army) for a in result)
-
-    return result
+    return { territory_occupant(s, t)
+             for t in s.state
+             if t.region == r }
 
 
 def armies_in_territories (s: State,
@@ -176,13 +158,8 @@ def armies_in_territories (s: State,
     assert all(t in s.world.territories for t in T)
     assert all(t in s.state for t in T)
 
-    result = { territory_occupant(s, t)
-               for t in T }
-
-    assert isinstance(result, set)
-    assert all(isinstance(a, Army) for a in result)
-
-    return result
+    return { territory_occupant(s, t)
+             for t in T }
 
 
 def region_occupant (s: State,
@@ -194,12 +171,8 @@ def region_occupant (s: State,
     assert isinstance(r, Region)
     assert r in s.world.regions
 
-    result = ( None          if len(A := armies_in_region(s, r)) > 0 else
-               next(iter(A)) )
-
-    assert result is None or isinstance(result, Army)
-
-    return result
+    return ( None          if len(A := armies_in_region(s, r)) > 0 else
+             next(iter(A)) )
 
 
 def regions_occupied_by_army (s:State,
@@ -212,14 +185,9 @@ def regions_occupied_by_army (s:State,
     assert a in s.world.armies
 
     T_a = territories_occupied_by_army(s, a)
-    result = { r
-               for r in s.world.regions
-               if s.world.region_territories[r] <= T_a }
-
-    assert isinstance(result, set)
-    assert all(isinstance(r, Region) for r in result)
-
-    return result
+    return { r
+             for r in s.world.regions
+             if s.world.region_territories[r] <= T_a }
 
 
 def is_occupied_region (s: State,
@@ -237,57 +205,9 @@ def is_occupied_region (s: State,
 def territory_fronts (s: State) -> Set[Tuple[Territory, Army, Territory, Army]]:
     assert isinstance(s, State)
 
-    result = { (t1, a1, t2, a2)
-               for (t1, t2) in s.world.adjacencies
-               if (a1 := territory_occupant(s, t1)) != (a2 := territory_occupant(s, t2)) }
-
-    assert isinstance(result, set)
-    assert all(isinstance(t, tuple) for t in result)
-    assert all(len(t) == 4 for t in result)
-    assert all(isinstance(t, Territory) for (t, _, _, _) in result)
-    assert all(isinstance(a, Army) for (_, a, _, _) in result)
-    assert all(isinstance(t, Territory) for (_, _, t, _) in result)
-    assert all(isinstance(a, Army) for (_, _, _, a) in result)
-
-    return result
-
-
-def army_territory_fronts (s: State,
-                           a: Army) -> Set[Tuple[Territory, Territory]]:
-    assert isinstance(s, State)
-    assert isinstance(a, Army)
-
-    result = { (t_a, t_d)
-               for (t_a, t_d) in s.world.adjacencies
-               if territory_occupant(s, t_a) == a
-               if territory_occupant(s, t_d) != a }
-
-    assert isinstance(result, set)
-    assert all(isinstance(t, tuple) for t in result)
-    assert all(len(t) == 2 for t in result)
-    assert all(isinstance(t, Territory) for (t, _) in result)
-    assert all(isinstance(t, Territory) for (_, t) in result)
-
-    return result
-
-
-def army_adjacent_territories (s: State,
-                               a: Army) -> Set[Tuple[Territory, Territory]]:
-    assert isinstance(s, State)
-    assert isinstance(a, Army)
-
-    result = { (t_0, t_1)
-               for (t_0, t_1) in s.world.adjacencies
-               if territory_occupant(s, t_0) == a
-               if territory_occupant(s, t_1) == a }
-
-    assert isinstance(result, set)
-    assert all(isinstance(t, tuple) for t in result)
-    assert all(len(t) == 2 for t in result)
-    assert all(isinstance(t, Territory) for (t, _) in result)
-    assert all(isinstance(t, Territory) for (_, t) in result)
-
-    return result
+    return { (t1, a1, t2, a2)
+             for (t1, t2) in s.world.adjacencies
+            if (a1 := territory_occupant(s, t1)) != (a2 := territory_occupant(s, t1)) }
 
 
 def army_units (s: State,
@@ -299,14 +219,9 @@ def army_units (s: State,
     assert isinstance(a, Army)
     assert a in s.world.armies
 
-    result = sum(territory_units(s, t)
-                 for t in s.state
-                 if territory_occupant(s, t) == a)
-
-    assert isinstance(result, Unit)
-    assert result >= 0, "there is always at least one unit on any territory, unless the army has been defeated"
-
-    return result
+    return sum(territory_units(s, t)
+               for t in s.state
+               if territory_occupant(s, t) == a)
 
 
 def is_defeated_army (s: State,
@@ -338,7 +253,6 @@ def reinforcement_units (s: State,
     result = max(3, len(T_a) // 3 + sum(r.value
                                         for r in R_a))
 
-    assert isinstance(result, Unit)
     assert result >= 3, "the minimal reinforcement units is three"
 
     return result
@@ -350,13 +264,9 @@ def undefeated_armies (s: State) -> Set[Army]:
     """
     assert isinstance(s, State)
 
-    result = { territory_occupant(s, t)
-               for t in s.state }
+    return { territory_occupant(s, t)
+             for t in s.state }
 
-    assert isinstance(result, set)
-    assert all(isinstance(a, Army) for a in result)
-
-    return result
 
 def winning_army (s: State) -> Optional[Army]:
     """
@@ -364,12 +274,8 @@ def winning_army (s: State) -> Optional[Army]:
     """
     assert isinstance(s, State)
 
-    result = ( None          if len(A := undefeated_armies(s)) > 1 else
-               next(iter(A)) )
-
-    assert result is None or isinstance(result, Army)
-
-    return result
+    return ( None          if len(A := undefeated_armies(s)) > 1 else
+             next(iter(A)) )
 
 
 def game_over (s: State) -> bool:
