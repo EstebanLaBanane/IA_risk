@@ -311,6 +311,10 @@ def bordering_troups(s : State, t : Territory, occupant : Army, excluded_territo
 def border_territories(s : State, a : Army) -> list:
     """
     Returns the territories with enemy neighbors and the number of enemy units around. Format : [[Territory, enemy units],[...]] sorted descending by enemy units.
+    
+    Input :
+            s : State = Game state
+            a : Army = army for which we find border territories
     """
     border_territories = []
     T_a = list(territories_occupied_by_army(s, a))

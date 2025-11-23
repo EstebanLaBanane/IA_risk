@@ -140,7 +140,8 @@ def border_reinforcement (s: State,
     result = {}
     
     # At the end of the processing border_territories will follow this format :
-    # [ [Territory, neighboring_units, fraction of all neighboring units, awarded reinforcement], [...] ]
+    # [ [Territory, neighboring_units, unanswered_units], [...] ]
+    # where unanswered_units equals the neighboring_units + 3 minus the units in the territory or 0 if the result was negative
     b_territories = border_territories(s,a)
 
     for border_territory in b_territories:
@@ -204,7 +205,7 @@ def border_reinforcement (s: State,
         #     print("diff : ",diff)
         #     print("start sum : ",start_sum)
         #     print("recalculed : ",sum(result[t] for t in result) - reinforcement_units(s,a))
-        assert sum(result[t] for t in result) == reinforcement_units(s, a), "ICI, The sum of all the reinforcement units must be equal to {reinforcement_units(s, a)}"            
+        assert sum(result[t] for t in result) == reinforcement_units(s, a), "The sum of all the reinforcement units must be equal to {reinforcement_units(s, a)}"            
         return result
 
 
