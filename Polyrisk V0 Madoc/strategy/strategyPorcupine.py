@@ -6,4 +6,4 @@ This class inherits from Strategy and implements a list of defenses to the forma
 This is used to launch counter-attacks
 """
 class StrategyPorcupine(Strategy):
-    last_round_defenses : list[dict] = []
+    last_round_defenses : list[list] = []
