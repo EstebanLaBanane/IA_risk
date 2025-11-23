@@ -109,7 +109,7 @@ def random_attack (s: State,
 from strategy.strategyPorcupine import StrategyPorcupine
 
 def counter_attack (s: State,
-                              a: Army) -> Optional[Tuple[Territory, Territory, Unit]]:
+                    a: Army) -> Optional[Tuple[Territory, Territory, Unit]]:
     
     """
     An attack is only launched on a territory after defending an attack from it.
