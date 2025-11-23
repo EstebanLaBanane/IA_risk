@@ -7,7 +7,6 @@
 # The use of this library is not authorised outside the Polytechnic School of the University of Nantes.
 #
 
-
 """
 This is the main program.
 It runs the game after a random initialisation.
@@ -16,6 +15,11 @@ Two visualisation are provided:
     * one simply displays the successive states of the board, which allows to follow the situation at a glance,
     * another one shows all the details between the consecutive boards.
 """
+import os
+import sys
+
+if sys.platform == "win32":
+    os.system('')  # Active les codes ANSI sur Windows 10+
 
 
 from typing import Optional
@@ -27,7 +31,8 @@ from boards.polytech_board import risk_map, risk_display
 # from boards.classic_board import risk_map, risk_display
 from boards.rendering import risk_colour_map, colour_map, BRIGHT_BACKGROUND_COLOUR_MAP
 from ais.neutrals import strategy_neutral_fully_random, strategy_neutral_uniform_random
-from ais.randoms import strategy_fully_random, strategy_uniform_random
+from ais.randoms import (strategy_fully_random, strategy_uniform_random,strategy_safe,
+strategy_fronteline_mcts_min_aggressive_random,strategy_UCB0,strategy_UCB1,strategy_UCB2,strategy_UCB3)
 from game.game import game
 from game.setup import random_initial_state
 
@@ -65,9 +70,9 @@ def play_and_display (w:     World,
                                          for t in numbering ])))
     sleep(0.1)
     P = game(s_0, r_max)
-    for (j, ((R, A, I, m), s_j)) in enumerate(P):
+    for (j, ((R, A, I, m), s_j)) in enumerate(P, start = 1):
         a = s_j.state[next(iter(R))][0]
-        print(f"State {j}:  Army ``{a.colour}'' turn ({a.strategy.name})")
+        print(f"State {j} / {len(P)}:  Army ``{a.colour}'' turn ({a.strategy.name})")
         print("Reinforcements:")
         for t in R:
             print(f"   - ``{t.name}'' with {format_units(R[t])}")
@@ -104,7 +109,7 @@ def play_and_display (w:     World,
 
 def play_and_animate (w:     World,
                       r_max: Optional[int],
-                      d:     float = 0.5):
+                      d:     float = 0.1):
     """
     Plays a game and displays only the consecutive boards, with a delay between each frame, the default value of which is half a second.
 
@@ -135,13 +140,13 @@ def play_and_animate (w:     World,
     sleep(d)
     P = game(s_0, r_max)
     A = list(s_0.world.armies)
-    for (j, ((R, _, _, _), s_j)) in enumerate(P):
+    for (j, ((R, _, _, _), s_j)) in enumerate(P, start = 1):
         a_j = s_j.state[next(iter(R))][0]
-        print(f"{top_console()}State {j}: " + ", ".join([ ( highlight(t) if a == a_j                 else
-                                                            downlight(t) if is_defeated_army(s_j, a) else
-                                                            t )
-                                                          for a in A
-                                                          for t in [ f"{a.colour} ({a.strategy.name})" ] ]))
+        print(f"{top_console()}State {j} / {len(P)}: " + ", ".join([ ( highlight(t) if a == a_j                 else
+                                                                       downlight(t) if is_defeated_army(s_j, a) else
+                                                                       t )
+                                                                     for a in A
+                                                                     for t in [ f"{a.colour} ({a.strategy.name})" ] ]))
         print(colour_map(risk_colour_map(s_j, legend, BRIGHT_BACKGROUND_COLOUR_MAP), text_map.format(* [ s_j.state[s_j.world.territory(t)][1]
                                                                                                          for t in numbering ])), end="")
         sleep(d)
@@ -158,18 +163,23 @@ AIs = {
     -1: strategy_neutral_uniform_random,
     1: strategy_fully_random,
     2: strategy_uniform_random,
+    3: strategy_safe,
+    6:strategy_fronteline_mcts_min_aggressive_random,
+
+    20:strategy_UCB0,21:strategy_UCB1,22:strategy_UCB2,23:strategy_UCB3,
     }
 """
 The available AIs, identified by indices in order to be selected later.
 """
 
 
-GAME = [1, 1, 2, 2]
+GAME = [ 1,1,23]
 """
 A selection of the strategies to be used by different armies.
 """
 
 
 if __name__ == '__main__':
-    # play_and_display(World([ AIs[i] for i in GAME ], *risk_map()), R_MAX)
+    
+    #play_and_display(World([ AIs[i] for i in GAME ], *risk_map()), R_MAX)
     play_and_animate(World([ AIs[i] for i in GAME ], *risk_map()), R_MAX, 0.1)

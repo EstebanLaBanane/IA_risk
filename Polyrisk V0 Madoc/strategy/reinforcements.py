@@ -37,12 +37,12 @@ def model_of_reinforcement_function (s: State,
     assert isinstance(a, Army)
     assert a in s.world.armies, "unknown army to reinforce"
     assert not is_defeated_army(s, a), "defeated army cannot be reinforced"
-    assert reinforcement_units(s, a) > 0, "reinforcements units have to be strictly positive"
+    assert reinforcement_units(s, a) > 0, "reinforcement units have to be strictly positive"
 
     result = DO_SOME_STUFF
 
     # POST-CONDITION
-    assert all(result[t].army == a for t in result), "The selected territories belong to the army"
+    assert all(territory_occupant(s, t) == a for t in result), "The selected territories belong to the army"
     assert all(result[t] > 0 for t in result), "Each selected territory must receive at least one unit"
     assert sum(result[t] for t in result) == reinforcement_units(s, a), "The sum of all the reinforcement units must be equal to {reinforcement_units(s, a)}"
 
@@ -74,7 +74,7 @@ def random_reinforcement (s: State,
     assert isinstance(a, Army)
     assert a in s.world.armies, "unknown army to reinforce"
     assert not is_defeated_army(s, a), "defeated army cannot be reinforced"
-    assert reinforcement_units(s, a) > 0, "reinforcements units have to be strictly positive"
+    assert reinforcement_units(s, a) > 0, "reinforcement units have to be strictly positive"
 
     T_a = territories_occupied_by_army(s, a)
     card_T_a = len(T_a)
@@ -103,7 +103,7 @@ def random_uniform_reinforcement (s: State,
     assert isinstance(a, Army)
     assert a in s.world.armies, "unknown army to reinforce"
     assert not is_defeated_army(s, a), "defeated army cannot be reinforced"
-    assert reinforcement_units(s, a) > 0, "reinforcements units have to be strictly positive"
+    assert reinforcement_units(s, a) > 0, "reinforcement units have to be strictly positive"
 
     u_a = reinforcement_units(s, a)
     T_a = list(territories_occupied_by_army(s, a))
