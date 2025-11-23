@@ -32,6 +32,7 @@ from ais.randoms import strategy_fully_random, strategy_uniform_random
 Added
 """
 from ais.porcupine import strategy_porcupine
+from ais.probabilistics import strategy_safe, strategy_UCB
 """
 Added
 """
@@ -175,6 +176,8 @@ AIs = {
     1: strategy_fully_random,
     2: strategy_uniform_random,
     3: strategy_porcupine,
+    4: strategy_UCB,
+    5: strategy_safe,
     }
 """
 The available AIs, identified by indices in order to be selected later.

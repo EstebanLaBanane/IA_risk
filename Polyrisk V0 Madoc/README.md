@@ -250,5 +250,9 @@ Simply:
     ```shell
     python -O polyrisk.py
     ```
+    or
+    ```shell
+    python -O run_batch.py
+    ```
 
 Enjoy the animation! (Not too often...)
