@@ -131,7 +131,7 @@ The directory `utilities` defines general functions that are not dedicated to th
 
 ### F. Main Directory
 
-The main directory contains some aside computations that have been conducted in order to highlight some aspects of the game.
+The directory main directory contains some aside computations that have been conducted in order to highlight some aspects of the game.
 They are not used during a game.
 Currently, it is limited to determining the probabilities associated to battles:
 
@@ -205,7 +205,7 @@ They correspond to the decisions that an AI must take at each step:
 * In case of a successful battle that leads to victory, how many of its units should invade the newly occupied territory?
 * Lastly, should some units from one of its territories move to another bordering one?
 
-Providing decision procedures to these five questions is what constitutes the strategy of an AI.
+Providing decision procedures to these five questions is what constitute the strategy of an AI.
 Everything else is ruled by the game engine.
 For each of these functions, mostly random choices are provided in the corresponding modules, namely `reinforcements`, `attacks`, `defenses`, `invasions`, and `maneuvers`.
 They have to be extended with new proposals!
@@ -227,7 +227,7 @@ _Nota._ Using `future annotations` *does* create a circular dependency error at 
 
 The game framework has *not* been fully and thouroughly tested.
 However, the proposed AIs have been playing together for several games.
-Since pre- and post-conditions are spread all over the code, naïve bugs should be absent for the actually used functions.
+Since pre- and post-conditions are spread all over the code, naïve bugs should be absent.
 
 _Nota._ Pre- and post-conditions are often repeated in various places to catch possible errors as soon as possible.
 This is especially true for functions that have to be used as models.
